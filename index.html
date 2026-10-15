@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Домашнее задание — Неделя 5. Считаем и проверяем через ИИ</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f7f6f2;
+  color: #1f2937;
+  line-height: 1.6;
+  font-size: 16px;
+}
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+header {
+  background: #1a2e44;
+  color: #f7f6f2;
+  padding: 48px 0 40px;
+}
+header .meta {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 14px;
+}
+header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+header .lead {
+  font-size: 17px;
+  opacity: 0.88;
+  max-width: 600px;
+  line-height: 1.5;
+}
+main {
+  padding: 48px 0 32px;
+}
+section {
+  margin-bottom: 40px;
+}
+h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a2e44;
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a2e44;
+  margin-top: 22px;
+  margin-bottom: 10px;
+}
+p { margin-bottom: 12px; }
+ul, ol { margin-bottom: 12px; padding-left: 24px; }
+li { margin-bottom: 6px; }
+strong { color: #1a2e44; }
+.callout {
+  background: #fff;
+  border-left: 3px solid #1a2e44;
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-radius: 0 4px 4px 0;
+}
+.callout-title {
+  font-weight: 700;
+  color: #1a2e44;
+  margin-bottom: 8px;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.prompt {
+  background: #1a2e44;
+  color: #e8eaef;
+  padding: 16px 20px;
+  border-radius: 6px;
+  font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 16px 0;
+}
+.prompt::before {
+  content: "промпт";
+  display: inline-block;
+  font-family: -apple-system, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a96a8;
+  margin-bottom: 8px;
+}
+.checklist {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 20px;
+}
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item .box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+.checklist-item .text { flex: 1; }
+.cta {
+  background: #1a2e44;
+  color: #f7f6f2;
+  padding: 28px;
+  border-radius: 6px;
+  text-align: left;
+}
+.cta-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.cta-text { font-size: 15px; opacity: 0.9; line-height: 1.55; }
+.alert {
+  background: #fef3c7;
+  border-left: 3px solid #d97706;
+  padding: 14px 18px;
+  margin: 16px 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 14.5px;
+}
+.alert strong { color: #92400e; }
+.note {
+  background: #f0f9ff;
+  border-left: 3px solid #0284c7;
+  padding: 14px 18px;
+  margin: 16px 0;
+  border-radius: 0 4px 4px 0;
+  font-size: 14.5px;
+}
+.note strong { color: #075985; }
+.kbd {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-family: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  color: #1f2937;
+}
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding-left: 0;
+}
+.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 40px;
+  margin-bottom: 12px;
+}
+.steps > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  background: #1a2e44;
+  color: #f7f6f2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+footer {
+  background: #1a2e44;
+  color: #f7f6f2;
+  padding: 24px 0;
+  font-size: 14px;
+  opacity: 0.85;
+  text-align: center;
+  margin-top: 32px;
+}
+@media (max-width: 600px) {
+  header { padding: 32px 0 28px; }
+  header h1 { font-size: 24px; }
+  header .lead { font-size: 16px; }
+  main { padding: 32px 0 24px; }
+  h2 { font-size: 19px; }
+  .container { padding: 0 16px; }
+  .prompt { font-size: 13px; padding: 14px 16px; }
+  .cta { padding: 22px; }
+  section { margin-bottom: 32px; }
+}
+</style>
+</head>
+<body>
+<header>
+<div class="container">
+<div class="meta">Неделя 5 · Модуль 2 · 15–22 октября 2026</div>
+<h1>Считаем и проверяем через ИИ</h1>
+<p class="lead">Одна внешняя цифра, одна находка из своих данных, три строки протокола проверки. По итогу — аргумент, который можно нести на совещание.</p>
+</div>
+</header>
+
+<main>
+<div class="container">
+
+<section>
+<h2>Что получится</h2>
+<p>Пять рабочих артефактов:</p>
+<ol>
+<li><strong>ТЗ на исследование</strong> с одной проверенной ссылкой — внешняя цифра из надёжного источника.</li>
+<li><strong>Обезличенный файл</strong> с двумя контрольными цифрами — до правок и после индексации.</li>
+<li><strong>Одна находка</strong> по формуле «что / насколько / почему / что и когда» — готова к совещанию.</li>
+<li><strong>Три строки протокола</strong> — доказательство, что расчёт проверен.</li>
+<li><strong>Готовое сообщение</strong> в общий чат клуба.</li>
+</ol>
+</section>
+
+<section>
+<h2>Что должно быть открыто</h2>
+<ul>
+<li>Ноутбук с подпиской <strong>ChatGPT</strong>, <strong>Claude</strong> или <strong>Perplexity</strong>.</li>
+<li>Учебный файл «Волна — Ритм» из материалов к встрече — для тех, у кого нет своей выгрузки.</li>
+<li>Своя выгрузка в формате <span class="kbd">.xlsx</span> или <span class="kbd">.csv</span> — для тех, у кого есть.</li>
+<li>Excel или Google Таблицы — для контрольной цифры и одной ручной проверки.</li>
+</ul>
+</section>
+
+<section>
+<h2>Шаг 1 · Найдите одну внешнюю цифру</h2>
+<p>Возьмите один рабочий вопрос: динамика сырья, цена конкурента, объём категории, условия сети. Запустите глубокое исследование по шаблону ТЗ.</p>
+
+<div class="prompt">Проведи исследование по вопросу: [ВОПРОС].
+Период: [С МЕСЯЦА] — [ПО МЕСЯЦ]. География: [СТРАНА/РЕГИОН]. Единицы: [ЕДИНИЦЫ].
+Источники в приоритете: официальная статистика, отчётность компаний, отраслевые союзы. Не используй форумы, блоги и агрегаторы без первоисточника.
+Выдай таблицу: факт · значение · единицы · источник · дата публикации · прямая ссылка на страницу с цифрой.
+Если данных нет или источники расходятся — так и напиши. Не оценивай и не достраивай.</div>
+
+<p>Где включить режим глубокого исследования:</p>
+<ul>
+<li><strong>ChatGPT:</strong> в строке ввода значок «+» или «Инструменты» → «Глубокое исследование».</li>
+<li><strong>Perplexity:</strong> переключатель в строке поиска → <strong>Research</strong>.</li>
+<li><strong>Claude:</strong> кнопка <strong>Research</strong> под строкой ввода, веб-поиск должен быть включён.</li>
+</ul>
+
+<p>Когда отчёт готов, найдите в нём список источников и откройте <strong>одну ссылку</strong>. Проверьте три вещи:</p>
+<ol>
+<li>Ссылка ведёт на конкретную страницу, а не на главную.</li>
+<li>На странице есть нужная цифра (поиск по странице: <span class="kbd">Ctrl</span>+<span class="kbd">F</span> или <span class="kbd">⌘</span>+<span class="kbd">F</span>).</li>
+<li>Совпадают дата, единицы, география.</li>
+</ol>
+
+<div class="note"><strong>Если цифры на странице нет</strong> — источник не годится, даже если сайт солидный. Замените на другой и проверьте заново.</div>
+
+<p><strong>Что зафиксировать:</strong> скриншот таблицы исследования с проверенной ссылкой.</p>
+</section>
+
+<section>
+<h2>Шаг 2 · Обезличьте свою выгрузку</h2>
+<p>Откройте свою выгрузку. Если её нет — откройте учебный файл «Волна — Ритм».</p>
+
+<p><strong>До любых правок запишите контрольную цифру</strong> — итог выручки в той форме, в которой он есть в файле. Это страховка от ошибок модели и ваших собственных.</p>
+
+<p>Пройдите чек-лист из 8 пунктов:</p>
+<ol>
+<li>Контрольная цифра записана до правок.</li>
+<li>Имена клиентов заменены кодами (Клиент 1, Клиент 2…).</li>
+<li>ФИО и телефоны удалены полностью.</li>
+<li>Деньги переведены в индекс (1 млн ₽ = 100 единиц), объёмы в масштабе.</li>
+<li>Города обобщены до округов или регионов.</li>
+<li>Скрытые листы и примечания к ячейкам удалены.</li>
+<li>Свойства файла очищены, имя файла нейтральное.</li>
+<li>Таблица замен сохранена <strong>отдельно</strong> на вашем компьютере — в чат ключ не попадает.</li>
+</ol>
+
+<div class="alert"><strong>Обезличить ≠ убрать имя.</strong> Сеть узнаётся без названия, если остались регион, формат и доля в обороте. Проверочный вопрос: может ли коллега из другой компании по этому файлу понять, о ком речь?</div>
+
+<p><strong>После обезличивания пересчитайте контрольную цифру</strong> в тех же единицах (в индексе) и запишите её рядом с исходной.</p>
+
+<p><strong>Что зафиксировать:</strong> скриншот таблицы замен с двумя контрольными цифрами — до и после индексации.</p>
+</section>
+
+<section>
+<h2>Шаг 3 · Задайте один вопрос к файлу</h2>
+<p>Загрузите обезличенный файл в новый чат. Первым делом проверьте, что модель видит то же, что видите вы.</p>
+
+<p><strong>Первый вопрос — паспорт файла.</strong> Попросите модель описать файл и посчитать сумму по колонке выручки.</p>
+
+<div class="prompt">Ничего не считай и не делай выводов. Опиши загруженный файл:
+— какие листы и колонки, что в каждой;
+— период и детализация;
+— сколько строк;
+— есть ли пропуски, дубли, отрицательные значения, итоговые строки внутри данных;
+— в каких единицах деньги и объёмы.
+Посчитай сумму по колонке выручки и выведи её отдельной строкой.</div>
+
+<p>Сумма в ответе должна совпасть с вашей контрольной цифрой. Если не совпала — файл прочитан неправильно, дальше идти нельзя.</p>
+
+<div class="note"><strong>Контрольная цифра учебного файла «Волна — Ритм»:</strong> 12&nbsp;255,9 в индексе. Если модель назвала другое число — она неправильно прочитала файл.</div>
+
+<p><strong>Второй вопрос — находка.</strong> Попросите разложить рост выручки на три части.</p>
+
+<div class="prompt">Сравни последние 12 месяцев с предыдущими 12. Выручка выросла — за счёт чего: цены, объёма продаж или новых товаров? Посчитай кодом и ответь коротко, в трёх-четырёх строках.</div>
+
+<p>В ответе должен быть блок кода или пометка «Анализ данных» / «Code execution». Если модель написала цифру текстом без расчёта — попросите «посчитай кодом».</p>
+
+<p><strong>Что зафиксировать:</strong> скриншот ответа с блоком кода или пометкой анализа данных.</p>
+</section>
+
+<section>
+<h2>Шаг 4 · Сформулируйте находку по формуле</h2>
+<p>Ответ модели переведите в четыре формы:</p>
+
+<div class="callout">
+<div class="callout-title">Что обнаружил</div>
+<p style="margin: 0;">Факт из данных.</p>
+</div>
+
+<div class="callout">
+<div class="callout-title">Насколько</div>
+<p style="margin: 0;">Цифра и сравнение.</p>
+</div>
+
+<div class="callout">
+<div class="callout-title">Почему</div>
+<p style="margin: 0;">Гипотеза. Её приносите вы, а не модель.</p>
+</div>
+
+<div class="callout">
+<div class="callout-title">Что и когда</div>
+<p style="margin: 0;">Конкретное действие и срок.</p>
+</div>
+
+<p><strong>Пример.</strong> Что: рост выручки держится на двух новинках. Насколько: +6,7%, без новинок падение −1,6%. Почему: в первом полугодии вывели две позиции, которые дали 8% оборота. Что и когда: до конца месяца разбираю, какие базовые позиции просели сильнее всего, и предлагаю защитный план в ноябре.</p>
+
+<p>Находку сформулируйте своими словами. Гипотеза «почему» — ваша, потому что вы знаете контекст, которого модель не видит.</p>
+</section>
+
+<section>
+<h2>Шаг 5 · Проверьте расчёт контрольной цифрой</h2>
+<p>Запишите три строки протокола:</p>
+
+<ol>
+<li><strong>Контрольная цифра совпала</strong> — сумма из ответа модели равна контрольной цифре из шага 2.</li>
+<li><strong>Одна цифра руками</strong> — пересчитайте одну цифру из находки в сводной таблице Excel за 60 секунд.</li>
+<li><strong>Здравый смысл</strong> — порядок величины верный, знак верный, доли складываются в 100%.</li>
+</ol>
+
+<div class="alert"><strong>Если что-то не сошлось — это удачная находка:</strong> ошибка поймана до совещания, а не на нём.</div>
+
+<p><strong>Что зафиксировать:</strong> три строки протокола.</p>
+</section>
+
+<section>
+<h2>Что и куда сдавать</h2>
+<p>Одно сообщение в <strong>общий чат клуба</strong> (не в личку куратору). Тема сообщения:</p>
+
+<div class="prompt">ДЗ Неделя 5 — [Фамилия]</div>
+
+<p>Внутри — четыре скриншота (или сводный текст):</p>
+
+<li>Скриншот таблицы исследования с проверенной ссылкой.</li>
+<li>Скриншот таблицы замен с двумя контрольными цифрами — до и после индексации.</li>
+<li>Скриншот ответа модели с блоком кода или пометкой анализа данных.</li>
+<li>Текст находки по четырём формам (что / насколько / почему / что и когда).</li>
+
+<p>Плюс три строки протокола проверки.</p>
+
+<p><strong>Без своей выгрузки:</strong> делайте по учебному файлу «Волна — Ритм».</p>
+</section>
+
+<section>
+<h2>Чек-лист самопроверки</h2>
+<p>Перед отправкой сообщения в чат пройдите семь пунктов:</p>
+
+<div class="checklist">
+<div class="checklist-item"><div class="box"></div><div class="text">Скриншот исследования с одной проверенной ссылкой.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">Файл обезличен по всем 8 пунктам чек-листа.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">Контрольная цифра записана до правок и после индексации.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">Находка содержит четыре формы: что / насколько / почему / что и когда.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">В ответе модели виден блок кода или пометка анализа данных.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">Три строки протокола проверки.</div></div>
+<div class="checklist-item"><div class="box"></div><div class="text">Фамилия в теме сообщения.</div></div>
+</div>
+</section>
+
+<section>
+<div class="cta">
+<div class="cta-title">Срок сдачи — 22 октября 2026, до начала встречи</div>
+<div class="cta-text">На встрече будет разбор двух-трёх находок из чата. Вопросы — в общий чат клуба.</div>
+</div>
+</section>
+
+</div>
+</main>
+
+<footer>
+<div class="container">Неделя 5 · Модуль 2 · Закрытый FMCG-клуб</div>
+</footer>
+</body>
+</html>
